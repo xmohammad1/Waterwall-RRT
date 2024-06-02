@@ -26,7 +26,7 @@ if [ "$choices" -eq 4 ]; then
    ipv4_address=$(curl -s https://api.ipify.org)
    echo "Iran IPv4 is : $ipv4_address"
    read -p "How many kharej servers you have? " num_servers
-   n = 4
+   number = 4
    for (( i=1; i<=$num_servers; i++ ))
    do
       read -p "Enter the remote IP address for server $i: " remote_ip
@@ -41,15 +41,15 @@ network:
       local: $ipv4_address
       remote: $remote_ip
       addresses:
-        - 2a0$n:4f8:1c1b:219b:b1::2/64
+        - 2a0$number:4f8:1c1b:219b:b1::2/64
       mtu: 1500
 EOF
       cat <<EOF > "$net_file"
 [Network]
-Address=2a0$n:4f8:1c1b:219b:b1::2/64
-Gateway=2a0$n:4f8:1c1b:219b:b1::1
+Address=2a0$number:4f8:1c1b:219b:b1::2/64
+Gateway=2a0$number:4f8:1c1b:219b:b1::1
 EOF
-   n += 2
+   number += 2
    done
 elif [ "$choices" -eq 1 ]; then
    ipv4_address=$(curl -s https://api.ipify.org)
