@@ -6,15 +6,15 @@ echo "2. Kharej "
 echo "3. Exit"
 read -p "Enter your choice: " choice
 if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
-apt update
-wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
-apt install unzip -y
-unzip Waterwall-linux-64.zip
-sleep 0.5
-chmod +x Waterwall
-sleep 0.5
-rm Waterwall-linux-64.zip
-cat > core.json << EOF
+    apt update
+    wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
+    apt install unzip -y
+    unzip Waterwall-linux-64.zip
+    sleep 0.5
+    chmod +x Waterwall
+    sleep 0.5
+    rm Waterwall-linux-64.zip
+    cat > core.json << EOF
 {
     "log": {
         "path": "log/",
@@ -47,10 +47,11 @@ cat > core.json << EOF
     ]
 }
 EOF
-touch config.json
+    touch config.json
 fi
+
 if [ "$choice" -eq 1 ]; then
-    echo "You choice Iran."
+    echo "You chose Iran."
     read -p "enter Kharej Ipv4 :" ip_remote
     cat > config.json << EOF
 {
@@ -111,7 +112,7 @@ if [ "$choice" -eq 1 ]; then
                 "port": 443,
                 "nodelay": true,
                 "whitelist": [
-                    '"$ip_remote'/32"
+                    "$ip_remote/32"
                 ]
             },
             "next": "reality_server"
@@ -128,6 +129,8 @@ if [ "$choice" -eq 1 ]; then
     ]
 }
 EOF
+    nohup ./Waterwall &> waterwall.log &
+
 elif [ "$choice" -eq 2 ]; then
     echo "You chose Kharej."
     read -p "enter Iran Ip: " ip_remote
@@ -190,18 +193,18 @@ elif [ "$choice" -eq 2 ]; then
             "type": "TcpConnector",
             "settings": {
                 "nodelay": true,
-                "address": '"$ip_remote"',
+                "address": "$ip_remote",
                 "port": 443
             }
         }
     ]
 }    
 EOF
-    # Add the commands for Option 2 here
+    nohup ./Waterwall &> waterwall.log &
+
 elif [ "$choice" -eq 3 ]; then
     echo "Exiting."
     exit 0
 else
     echo "Invalid choice. Please try again."
 fi
-
