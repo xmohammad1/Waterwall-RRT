@@ -180,7 +180,7 @@ elif [ "$choice" -eq 2 ]; then
             "name": "reality_client",
             "type": "RealityClient",
             "settings": {
-                "sni": "www.speedtest.net",
+                "sni": "8.8.8.8",
                 "password": "123456as"
             },
             "next": "outbound_to_iran"
