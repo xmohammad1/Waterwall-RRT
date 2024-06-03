@@ -195,7 +195,7 @@ elif [ "$choice" -eq 2 ]; then
             }
         }
     ]
-}    
+}   
 EOF
     # Add the commands for Option 2 here
 elif [ "$choice" -eq 3 ]; then
@@ -204,4 +204,3 @@ elif [ "$choice" -eq 3 ]; then
 else
     echo "Invalid choice. Please try again."
 fi
-
