@@ -1,4 +1,11 @@
 #!/bin/bash
+
+echo "Please choose Number:"
+echo "1. Iran "
+echo "2. Kharej "
+echo "3. Exit"
+read -p "Enter your choice: " choice
+if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
 apt update
 wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
 apt install unzip -y
@@ -41,13 +48,7 @@ cat > core.json << EOF
 }
 EOF
 touch config.json
-
-echo "Please choose Number:"
-echo "1. Iran "
-echo "2. Kharej "
-echo "3. Exit"
-read -p "Enter your choice: " choice
-
+fi
 if [ "$choice" -eq 1 ]; then
     echo "You choice Iran."
     read -p "enter Kharej Ipv4 :" ip_remote
@@ -203,3 +204,4 @@ elif [ "$choice" -eq 3 ]; then
 else
     echo "Invalid choice. Please try again."
 fi
+
