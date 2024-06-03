@@ -1,109 +1,203 @@
 #!/bin/bash
-
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
-   exit 1
-fi
-
 apt update
-sleep 0.5
-apt-get install iproute2 -y
-sleep 0.5
-apt install netplan.io -y
-sleep 0.5
+wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
+apt install unzip -y
+unzip Waterwall-linux-64.zip
+chmod +x Waterwall
+cat > core.json << EOF
+{
+    "log": {
+        "path": "log/",
+        "core": {
+            "loglevel": "DEBUG",
+            "file": "core.log",
+            "console": true
+        },
+        "network": {
+            "loglevel": "DEBUG",
+            "file": "network.log",
+            "console": true
 
+        },
+        "dns": {
+            "loglevel": "SILENT",
+            "file": "dns.log",
+            "console": false
 
-echo "1. Kharej 1"
-echo "2. Kharej 2"
-echo "3. kharej 3"
-echo "4. Iran"
-echo "5. tunnel Gostv3"
-echo "6. install Sanai X-ui"
-echo "7. install Alireza X-ui"
-# Prompt user for IP addresses
-read -p "Select number : " choices
-if [ "$choices" -eq 4 ]; then
-   ipv4_address=$(curl -s https://api.ipify.org)
-   echo "Iran IPv4 is : $ipv4_address"
-   read -p "How many kharej servers you have? " num_servers
-   number = 4
-   for (( i=1; i<=$num_servers; i++ ))
-   do
-      read -p "Enter the remote IP address for server $i: " remote_ip
-      config_file="/etc/netplan/pdtun$i.yaml"
-      net_file="/etc/systemd/network/pdtun$i.network"
-      cat <<EOF > "$config_file"
-network:
-  version: 2
-  tunnels:
-    tunel0$i:
-      mode: sit
-      local: $ipv4_address
-      remote: $remote_ip
-      addresses:
-        - 2a0$number:4f8:1c1b:219b:b1::2/64
-      mtu: 1500
+        }
+    },
+    "dns": {},
+    "misc": {
+        "workers": 0,
+        "ram-profile": "server",
+        "libs-path": "libs/"
+    },
+    "configs": [
+        "config.json"
+    ]
+}
 EOF
-      cat <<EOF > "$net_file"
-[Network]
-Address=2a0$number:4f8:1c1b:219b:b1::2/64
-Gateway=2a0$number:4f8:1c1b:219b:b1::1
-EOF
-   number += 2
-   done
-elif [ "$choices" -eq 1 ]; then
-   ipv4_address=$(curl -s https://api.ipify.org)
-   echo "Kharej 1 IPv4 : $ipv4_address"
-   read -p "enter Iran Ip : " remote_ip
-   config_file="/etc/netplan/pdtun1.yaml"
-   net_file="/etc/systemd/network/pdtun1.network"
-   cat <<EOF > "$config_file"
-network:
-  version: 2
-  tunnels:
-    tunel01:
-      mode: sit
-      local: $ipv4_address
-      remote: $remote_ip
-      addresses:
-        - 2a04:4f8:1c1b:219b:b1::1/64
-      mtu: 1500
-EOF
-   cat <<EOF > "$net_file"
-[Network]
-Address=2a04:4f8:1c1b:219b:b1::1/64
-Gateway=2a04:4f8:1c1b:219b:b1::2
-EOF
+touch config.json
 
-elif [ "$choices" -eq 2 ]; then
-   ipv4_address=$(curl -s https://api.ipify.org)
-   echo "Kharej 2 IPv4 : $ipv4_address"
-   read -p "enter Iran Ip : " remote_ip
-   config_file="/etc/netplan/pdtun2.yaml"
-   net_file="/etc/systemd/network/pdtun2.network"
-   cat <<EOF > "$config_file"
-network:
-  version: 2
-  tunnels:
-    tunel02:
-      mode: sit
-      local: $ipv4_address
-      remote: $remote_ip
-      addresses:
-        - 2a06:4f8:1c1b:219b:b1::1/64
-      mtu: 1500
-EOF
-   cat <<EOF > "$net_file"
-[Network]
-Address=2a06:4f8:1c1b:219b:b1::1/64
-Gateway=2a06:4f8:1c1b:219b:b1::2
-EOF
+echo "Please choose Number:"
+echo "1. Iran "
+echo "2. Kharej "
+echo "3. Exit"
+read -p "Enter your choice: " choice
 
+if [ "$choice" -eq 1 ]; then
+    echo "You choice Iran."
+    read -p "enter Kharej Ipv4 :" ip_remote
+    cat > config.json << EOF
+{
+    "name": "reverse_reality_server_multiport",
+    "nodes": [
+        {
+            "name": "users_inbound",
+            "type": "TcpListener",
+            "settings": {
+                "address": "0.0.0.0",
+                "port": [443,65535],
+                "nodelay": true
+            },
+            "next": "header"
+        },
+        {
+            "name": "header",
+            "type": "HeaderClient",
+            "settings": {
+                "data": "src_context->port"
+            },
+            "next": "bridge2"
+        },
+        {
+            "name": "bridge2",
+            "type": "Bridge",
+            "settings": {
+                "pair": "bridge1"
+            }
+        },
+        {
+            "name": "bridge1",
+            "type": "Bridge",
+            "settings": {
+                "pair": "bridge2"
+            }
+        },
+        {
+            "name": "reverse_server",
+            "type": "ReverseServer",
+            "settings": {},
+            "next": "bridge1"
+        },
+        {
+            "name": "reality_server",
+            "type": "RealityServer",
+            "settings": {
+                "destination": "reality_dest",
+                "password": "123456as"
+            },
+            "next": "reverse_server"
+        },
+        {
+            "name": "kharej_inbound",
+            "type": "TcpListener",
+            "settings": {
+                "address": "0.0.0.0",
+                "port": 443,
+                "nodelay": true,
+                "whitelist": [
+                    "'"$ip_remote"'/32"
+                ]
+            },
+            "next": "reality_server"
+        },
+        {
+            "name": "reality_dest",
+            "type": "TcpConnector",
+            "settings": {
+                "nodelay": true,
+                "address": "8.8.8.8",
+                "port": 443
+            }
+        }
+    ]
+}
+EOF
+elif [ "$choice" -eq 2 ]; then
+    echo "You chose Kharej."
+    read -p "enter Iran Ip: " ip_remote
+    cat > config.json << EOF
+{
+    "name": "reverse_reality_client_multiport",
+    "nodes": [
+        {
+            "name": "outbound_to_core",
+            "type": "TcpConnector",
+            "settings": {
+                "nodelay": true,
+                "address": "127.0.0.1",
+                "port": "dest_context->port"
+            }
+        },
+        {
+            "name": "header",
+            "type": "HeaderServer",
+            "settings": {
+                "override": "dest_context->port"
+            },
+            "next": "outbound_to_core"
+        },
+        {
+            "name": "bridge1",
+            "type": "Bridge",
+            "settings": {
+                "pair": "bridge2"
+            },
+            "next": "header"
+        },
+        {
+            "name": "bridge2",
+            "type": "Bridge",
+            "settings": {
+                "pair": "bridge1"
+            },
+            "next": "reverse_client"
+        },
+        {
+            "name": "reverse_client",
+            "type": "ReverseClient",
+            "settings": {
+                "minimum-unused": 16
+            },
+            "next": "reality_client"
+        },
+        {
+            "name": "reality_client",
+            "type": "RealityClient",
+            "settings": {
+                "sni": "www.speedtest.net",
+                "password": "123456as"
+            },
+            "next": "outbound_to_iran"
+        },
+        {
+            "name": "outbound_to_iran",
+            "type": "TcpConnector",
+            "settings": {
+                "nodelay": true,
+                "address": "'"$ip_remote"'",
+                "port": 443
+            }
+        }
+    ]
+}    
+EOF
+    # Add the commands for Option 2 here
+elif [ "$choice" -eq 3 ]; then
+    echo "Exiting."
+    exit 0
 else
-   echo "Option not implemented."
-   exit 1
+    echo "Invalid choice. Please try again."
 fi
 
-netplan apply
-sleep 0.5
-systemctl restart systemd-networkd
