@@ -3,7 +3,10 @@ apt update
 wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
 apt install unzip -y
 unzip Waterwall-linux-64.zip
+sleep 0.5
 chmod +x Waterwall
+sleep 0.5
+rm Waterwall-linux-64.zip
 cat > core.json << EOF
 {
     "log": {
@@ -200,4 +203,3 @@ elif [ "$choice" -eq 3 ]; then
 else
     echo "Invalid choice. Please try again."
 fi
-
