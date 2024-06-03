@@ -6,15 +6,15 @@ echo "2. Kharej "
 echo "3. Exit"
 read -p "Enter your choice: " choice
 if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
-    apt update
-    wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
-    apt install unzip -y
-    unzip Waterwall-linux-64.zip
-    sleep 0.5
-    chmod +x Waterwall
-    sleep 0.5
-    rm Waterwall-linux-64.zip
-    cat > core.json << EOF
+apt update
+wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
+apt install unzip -y
+unzip Waterwall-linux-64.zip
+sleep 0.5
+chmod +x Waterwall
+sleep 0.5
+rm Waterwall-linux-64.zip
+cat > core.json << EOF
 {
     "log": {
         "path": "log/",
@@ -47,11 +47,10 @@ if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
     ]
 }
 EOF
-    touch config.json
+touch config.json
 fi
-
 if [ "$choice" -eq 1 ]; then
-    echo "You chose Iran."
+    echo "You choice Iran."
     read -p "enter Kharej Ipv4 :" ip_remote
     cat > config.json << EOF
 {
@@ -129,8 +128,6 @@ if [ "$choice" -eq 1 ]; then
     ]
 }
 EOF
-    nohup ./Waterwall &> waterwall.log &
-
 elif [ "$choice" -eq 2 ]; then
     echo "You chose Kharej."
     read -p "enter Iran Ip: " ip_remote
@@ -200,11 +197,11 @@ elif [ "$choice" -eq 2 ]; then
     ]
 }    
 EOF
-    nohup ./Waterwall &> waterwall.log &
-
+    # Add the commands for Option 2 here
 elif [ "$choice" -eq 3 ]; then
     echo "Exiting."
     exit 0
 else
     echo "Invalid choice. Please try again."
 fi
+
