@@ -111,7 +111,7 @@ if [ "$choice" -eq 1 ]; then
                 "port": 443,
                 "nodelay": true,
                 "whitelist": [
-                    "'"$ip_remote"'/32"
+                    '"$ip_remote'/32"
                 ]
             },
             "next": "reality_server"
@@ -190,7 +190,7 @@ elif [ "$choice" -eq 2 ]; then
             "type": "TcpConnector",
             "settings": {
                 "nodelay": true,
-                "address": "'"$ip_remote"'",
+                "address": '"$ip_remote"',
                 "port": 443
             }
         }
