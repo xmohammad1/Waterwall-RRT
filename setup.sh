@@ -3,7 +3,7 @@
 echo "Please choose Number:"
 echo "1. Iran "
 echo "2. Kharej "
-echo "3. Exit"
+echo "3. Uninstall"
 read -p "Enter your choice: " choice
 if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
   apt update
