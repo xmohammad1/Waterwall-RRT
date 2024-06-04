@@ -62,7 +62,7 @@ if [ "$choice" -eq 1 ]; then
             "type": "TcpListener",
             "settings": {
                 "address": "0.0.0.0",
-                "port": [443,65535],
+                "port": 443,
                 "nodelay": true
             },
             "next": "pbclient"
