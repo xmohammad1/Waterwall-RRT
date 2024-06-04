@@ -3,18 +3,18 @@
 echo "Please choose Number:"
 echo "1. Iran "
 echo "2. Kharej "
-echo "3. Uninstall"
+echo "3. Exit"
 read -p "Enter your choice: " choice
 if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
-apt update
-wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
-apt install unzip -y
-unzip Waterwall-linux-64.zip
-sleep 0.5
-chmod +x Waterwall
-sleep 0.5
-rm Waterwall-linux-64.zip
-cat > core.json << EOF
+  apt update
+  wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
+  apt install unzip -y
+  unzip Waterwall-linux-64.zip
+  sleep 0.5
+  chmod +x Waterwall
+  sleep 0.5
+  rm Waterwall-linux-64.zip
+  cat > core.json << EOF
 {
     "log": {
         "path": "log/",
@@ -47,7 +47,8 @@ cat > core.json << EOF
     ]
 }
 EOF
-touch config.json
+  public_ip=$(wget -qO- https://api.ipify.org)
+  echo "Your Server IPv4 is: $public_ip"
 fi
 if [ "$choice" -eq 1 ]; then
     echo "You choice Iran."
