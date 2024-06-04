@@ -3,7 +3,7 @@
 echo "Please choose Number:"
 echo "1. Iran "
 echo "2. Kharej "
-echo "3. Exit"
+echo "3. Uninstall"
 read -p "Enter your choice: " choice
 if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
 apt update
@@ -199,8 +199,10 @@ elif [ "$choice" -eq 2 ]; then
 EOF
     # Add the commands for Option 2 here
 elif [ "$choice" -eq 3 ]; then
-    echo "Exiting."
-    exit 0
+    rm -rf core.json
+    rm -rf config.json
+    rm -rf Waterwall
+    rm -rf log
 else
     echo "Invalid choice. Please try again."
 fi
