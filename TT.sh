@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 echo "Please choose Number:"
@@ -167,11 +166,11 @@ elif [ "$choice" -eq 2 ]; then
     ]
 }  
 EOF
-    touch fullchain.pem
-    touch privkey.pem
-    echo "Please edit fullchain.pem and privkey.pem files"
-    echo "nano fullchain.pem"
-    echo "nano privkey.pem"
+
+read -p "Enter the domain name: " DOMAIN
+openssl req -newkey rsa:2048 -nodes -keyout "privkey.pem" -x509 -days 365 -out "fullchain.pem" -subj "/CN=$DOMAIN"
+echo "SSL certificate and key have been saved in the current directory as fullchain.pem and privkey.pem"
+
 elif [ "$choice" -eq 3 ]; then
     echo "Exiting."
     exit 0
