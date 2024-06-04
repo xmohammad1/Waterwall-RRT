@@ -121,7 +121,7 @@ if [ "$choice" -eq 1 ]; then
             "type": "TcpConnector",
             "settings": {
                 "nodelay": true,
-                "address": "1.1.1.1",
+                "address": "8.8.8.8",
                 "port": 443
             }
         }
@@ -180,7 +180,7 @@ elif [ "$choice" -eq 2 ]; then
             "name": "reality_client",
             "type": "RealityClient",
             "settings": {
-                "sni": "1.1.1.1",
+                "sni": "8.8.8.8",
                 "password": "123456as"
             },
             "next": "outbound_to_iran"
