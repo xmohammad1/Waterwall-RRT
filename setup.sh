@@ -129,6 +129,7 @@ if [ "$choice" -eq 1 ]; then
     ]
 }
 EOF
+ nohup ./Waterwall > /dev/null 2>&1 &
 elif [ "$choice" -eq 2 ]; then
     echo "You chose Kharej."
     read -p "enter Iran Ip: " ip_remote
@@ -198,12 +199,14 @@ elif [ "$choice" -eq 2 ]; then
     ]
 }   
 EOF
+ nohup ./Waterwall > /dev/null 2>&1 &
     # Add the commands for Option 2 here
 elif [ "$choice" -eq 3 ]; then
     rm -rf core.json
     rm -rf config.json
     rm -rf Waterwall
     rm -rf log
+    pkill -f Waterwall
 else
     echo "Invalid choice. Please try again."
 fi
