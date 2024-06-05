@@ -213,7 +213,7 @@ EOF
     echo "Kharej IPv4 is: $public_ip"
     echo "Iran IPv4 is: $ip_remote"
     echo "SNI $HOSTNAME"
-    echo "Iran Setup Successfully Created "
+    echo "Kharej Setup Successfully Created "
 elif [ "$choice" -eq 3 ]; then
     rm -rf core.json
     rm -rf config.json
