@@ -131,6 +131,7 @@ if [ "$choice" -eq 1 ]; then
     ]
 }
 EOF
+    sleep 1
     nohup ./Waterwall > /dev/null 2>&1 &
     echo "Kharej IPv4 is: $public_ip"
     echo "Iran IPv4 is: $ip_remote"
@@ -207,6 +208,7 @@ elif [ "$choice" -eq 2 ]; then
     ]
 }   
 EOF
+    sleep 1
     nohup ./Waterwall > /dev/null 2>&1 &
     echo "Kharej IPv4 is: $public_ip"
     echo "Iran IPv4 is: $ip_remote"
