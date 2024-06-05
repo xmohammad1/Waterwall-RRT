@@ -53,6 +53,8 @@ fi
 if [ "$choice" -eq 1 ]; then
     echo "You choice Iran."
     read -p "enter Kharej Ipv4 :" ip_remote
+    read -p "Enter the SNI (default: www.speedtest.net): " input_sni
+    HOSTNAME=${input_sni:-www.speedtest.net}
     cat > config.json << EOF
 {
     "name": "reverse_reality_server_multiport",
@@ -122,17 +124,23 @@ if [ "$choice" -eq 1 ]; then
             "type": "TcpConnector",
             "settings": {
                 "nodelay": true,
-                "address": "8.8.8.8",
+                "address": "$HOSTNAME",
                 "port": 443
             }
         }
     ]
 }
 EOF
- nohup ./Waterwall > /dev/null 2>&1 &
+    nohup ./Waterwall > /dev/null 2>&1 &
+    echo "Kharej IPv4 is: $public_ip"
+    echo "Iran IPv4 is: $ip_remote"
+    echo "SNI $HOSTNAME"
+    echo "Created "
 elif [ "$choice" -eq 2 ]; then
     echo "You chose Kharej."
     read -p "enter Iran Ip: " ip_remote
+    read -p "Enter the SNI (default: www.speedtest.net): " input_sni
+    HOSTNAME=${input_sni:-www.speedtest.net}
     cat > config.json << EOF
 {
     "name": "reverse_reality_client_multiport",
@@ -182,7 +190,7 @@ elif [ "$choice" -eq 2 ]; then
             "name": "reality_client",
             "type": "RealityClient",
             "settings": {
-                "sni": "8.8.8.8",
+                "sni": "$HOSTNAME",
                 "password": "123456as"
             },
             "next": "outbound_to_iran"
@@ -199,8 +207,11 @@ elif [ "$choice" -eq 2 ]; then
     ]
 }   
 EOF
- nohup ./Waterwall > /dev/null 2>&1 &
-    # Add the commands for Option 2 here
+    nohup ./Waterwall > /dev/null 2>&1 &
+    echo "Kharej IPv4 is: $public_ip"
+    echo "Iran IPv4 is: $ip_remote"
+    echo "SNI $HOSTNAME"
+    echo "Created "
 elif [ "$choice" -eq 3 ]; then
     rm -rf core.json
     rm -rf config.json
