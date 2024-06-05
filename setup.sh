@@ -133,8 +133,8 @@ if [ "$choice" -eq 1 ]; then
 EOF
     sleep 1
     nohup ./Waterwall > /dev/null 2>&1 &
-    echo "Kharej IPv4 is: $public_ip"
-    echo "Iran IPv4 is: $ip_remote"
+    echo "Iran IPv4 is: $public_ip"
+    echo "Kharej IPv4 is: $ip_remote"
     echo "SNI $HOSTNAME"
     echo "Created "
 elif [ "$choice" -eq 2 ]; then
