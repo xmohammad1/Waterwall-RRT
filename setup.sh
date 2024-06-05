@@ -6,15 +6,22 @@ echo "2. Kharej "
 echo "3. Uninstall"
 read -p "Enter your choice: " choice
 if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
-  apt update
-  wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
-  apt install unzip -y
-  unzip Waterwall-linux-64.zip
-  sleep 0.5
-  chmod +x Waterwall
-  sleep 0.5
-  rm Waterwall-linux-64.zip
-  cat > core.json << EOF
+    apt update
+    sleep 0.5
+    CURRENT_PORT=$(grep "^Port " "$SSHD_CONFIG" | awk '{print $2}')
+    if [ "$CURRENT_PORT" != "22" ]; then
+        echo "Current SSH port is $CURRENT_PORT, change it to 22 first."
+        exit 1
+    fi
+
+    wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
+    apt install unzip -y
+    unzip Waterwall-linux-64.zip
+    sleep 0.5
+    chmod +x Waterwall
+    sleep 0.5
+    rm Waterwall-linux-64.zip
+    cat > core.json << EOF
 {
     "log": {
         "path": "log/",
@@ -47,8 +54,8 @@ if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
     ]
 }
 EOF
-  public_ip=$(wget -qO- https://api.ipify.org)
-  echo "Your Server IPv4 is: $public_ip"
+    public_ip=$(wget -qO- https://api.ipify.org)
+    echo "Your Server IPv4 is: $public_ip"
 fi
 if [ "$choice" -eq 1 ]; then
     echo "You choice Iran."
