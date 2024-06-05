@@ -218,6 +218,7 @@ elif [ "$choice" -eq 3 ]; then
     rm -rf Waterwall
     rm -rf log
     pkill -f Waterwall
+    echo "Removed"
 else
     echo "Invalid choice. Please try again."
 fi
