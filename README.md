@@ -6,5 +6,5 @@ bash <(curl -Ls https://raw.githubusercontent.com/xmohammad1/Waterwall-RRT/main/
 ```
 # TLS Tunnel
 ```
-wget https://raw.githubusercontent.com/xmohammad1/Waterwall-RRT/main/TT.sh && bash TT.sh
+
 ```
