@@ -8,6 +8,16 @@ read -p "Enter your choice: " choice
 if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
     apt update
     sleep 0.5
+    SSHD_CONFIG_FILE="/etc/ssh/sshd_config"
+    CURRENT_PORT=$(grep -E '^(#Port |Port )' "$SSHD_CONFIG_FILE")
+
+    if [[ "$CURRENT_PORT" != "Port 22" && "$CURRENT_PORT" != "#Port 22" ]]; then
+        sudo sed -i -E 's/^(#Port |Port )[0-9]+/Port 22/' "$SSHD_CONFIG_FILE"
+        echo "SSH Port has been updated to Port 22."
+        sudo systemctl restart sshd
+        sudo service ssh restart
+    fi
+    sleep 0.5
     wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
     apt install unzip -y
     unzip Waterwall-linux-64.zip
