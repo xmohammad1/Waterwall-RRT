@@ -8,9 +8,10 @@ read -p "Enter your choice: " choice
 if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
     apt update
     sleep 0.5
+    SSHD_CONFIG="/etc/ssh/sshd_config"
     CURRENT_PORT=$(grep "^Port " "$SSHD_CONFIG" | awk '{print $2}')
     if [ "$CURRENT_PORT" != "22" ]; then
-        echo "Current SSH port is $CURRENT_PORT, change it to 22 first."
+        echo "Current SSH port is $CURRENT_PORT, changing  it to 22 first."
         exit 1
     fi
 
