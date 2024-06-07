@@ -16,4 +16,4 @@ bash <(curl -Ls https://raw.githubusercontent.com/xmohammad1/Waterwall-RRT/main/
 
 دومی Reality Direct Tunnel تانل مستقیم هست هم میتونید ای پی اصلی سرور رو بدید هم میتونید مثلا با یه روشی مثل ای پی لوکال 4 ترکیبش کنید
 
-دولپر این هسته پروژه https://github.com/radkesvat/WaterWall
+دولپر core این پروژه https://github.com/radkesvat/WaterWall
