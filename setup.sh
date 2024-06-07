@@ -4,6 +4,31 @@ echo "Please choose Number:"
 echo "1. Iran "
 echo "2. Kharej "
 echo "3. Uninstall"
+
+    setup_waterwall_service() {
+    cat > /etc/systemd/system/waterwall.service << EOF
+[Unit]
+Description=Waterwall Service
+After=network.target
+
+[Service]
+ExecStart=/root/RRT/Waterwall
+WorkingDirectory=/root/RRT
+Restart=always
+RestartSec=5
+User=root
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    systemctl daemon-reload
+    systemctl enable waterwall
+    systemctl start waterwall
+}
+
 read -p "Enter your choice: " choice
 if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
     apt update
@@ -18,6 +43,8 @@ if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
         sudo service ssh restart
     fi
     sleep 0.5
+    mkdir /root/RRT
+    cd /root/RRT
     wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
     apt install unzip -y
     unzip Waterwall-linux-64.zip
@@ -142,8 +169,9 @@ if [ "$choice" -eq 1 ]; then
     ]
 }
 EOF
-    sleep 1
-    nohup ./Waterwall > /dev/null 2>&1 &
+    sleep 0.5
+    setup_waterwall_service
+    sleep 0.5
     echo "Iran IPv4 is: $public_ip"
     echo "Kharej IPv4 is: $ip_remote"
     echo "SNI $HOSTNAME"
@@ -219,18 +247,24 @@ elif [ "$choice" -eq 2 ]; then
     ]
 }   
 EOF
-    sleep 1
-    nohup ./Waterwall > /dev/null 2>&1 &
+    sleep 0.5
+    setup_waterwall_service
+    sleep 0.5
     echo "Kharej IPv4 is: $public_ip"
     echo "Iran IPv4 is: $ip_remote"
     echo "SNI $HOSTNAME"
     echo "Kharej Setup Successfully Created "
 elif [ "$choice" -eq 3 ]; then
+    sudo systemctl stop waterwall
+    sudo systemctl disable waterwall
+    rm -rf /etc/systemd/system/waterwall.service
+    pkill -f Waterwall
+    cd /root/RRT
     rm -rf core.json
     rm -rf config.json
     rm -rf Waterwall
     rm -rf log
-    pkill -f Waterwall
+
     echo "Removed"
 else
     echo "Invalid choice. Please try again."
