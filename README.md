@@ -12,4 +12,4 @@ bash <(curl -Ls https://raw.githubusercontent.com/xmohammad1/Waterwall-RRT/main/
 
  
 
-دولوپر core این پروژه https://github.com/radkesvat/WaterWall- 
+- دولوپر core این پروژه https://github.com/radkesvat/WaterWall
