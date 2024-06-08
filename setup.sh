@@ -1,10 +1,10 @@
 #!/bin/bash
 
 echo "Please choose Number:"
-echo "1. Iran "
-echo "2. Kharej "
-echo "3. Uninstall"
-
+echo "1) Iran "
+echo "2) Kharej "
+echo "3) Uninstall"
+echo "9) Back"
     setup_waterwall_service() {
     cat > /etc/systemd/system/waterwall.service << EOF
 [Unit]
