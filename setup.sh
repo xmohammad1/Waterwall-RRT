@@ -1,11 +1,6 @@
 #!/bin/bash
 
-echo "Please choose Number:"
-echo "1) Iran "
-echo "2) Kharej "
-echo "3) Uninstall"
-echo "9) Back"
-    setup_waterwall_service() {
+setup_waterwall_service() {
     cat > /etc/systemd/system/waterwall.service << EOF
 [Unit]
 Description=Waterwall Service
@@ -29,30 +24,37 @@ EOF
     systemctl start waterwall
 }
 
-read -p "Enter your choice: " choice
-if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
-    apt update
-    sleep 0.5
-    SSHD_CONFIG_FILE="/etc/ssh/sshd_config"
-    CURRENT_PORT=$(grep -E '^(#Port |Port )' "$SSHD_CONFIG_FILE")
+while true; do
+    echo "Please choose Number:"
+    echo "1) Iran "
+    echo "2) Kharej "
+    echo "3) Uninstall"
+    echo "9) Back"
 
-    if [[ "$CURRENT_PORT" != "Port 22" && "$CURRENT_PORT" != "#Port 22" ]]; then
-        sudo sed -i -E 's/^(#Port |Port )[0-9]+/Port 22/' "$SSHD_CONFIG_FILE"
-        echo "SSH Port has been updated to Port 22."
-        sudo systemctl restart sshd
-        sudo service ssh restart
-    fi
-    sleep 0.5
-    mkdir /root/RRT
-    cd /root/RRT
-    wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
-    apt install unzip -y
-    unzip Waterwall-linux-64.zip
-    sleep 0.5
-    chmod +x Waterwall
-    sleep 0.5
-    rm Waterwall-linux-64.zip
-    cat > core.json << EOF
+    read -p "Enter your choice: " choice
+    if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
+        apt update
+        sleep 0.5
+        SSHD_CONFIG_FILE="/etc/ssh/sshd_config"
+        CURRENT_PORT=$(grep -E '^(#Port |Port )' "$SSHD_CONFIG_FILE")
+
+        if [[ "$CURRENT_PORT" != "Port 22" && "$CURRENT_PORT" != "#Port 22" ]]; then
+            sudo sed -i -E 's/^(#Port |Port )[0-9]+/Port 22/' "$SSHD_CONFIG_FILE"
+            echo "SSH Port has been updated to Port 22."
+            sudo systemctl restart sshd
+            sudo service ssh restart
+        fi
+        sleep 0.5
+        mkdir /root/RRT
+        cd /root/RRT
+        wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
+        apt install unzip -y
+        unzip Waterwall-linux-64.zip
+        sleep 0.5
+        chmod +x Waterwall
+        sleep 0.5
+        rm Waterwall-linux-64.zip
+        cat > core.json << EOF
 {
     "log": {
         "path": "log/",
@@ -65,13 +67,11 @@ if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
             "loglevel": "DEBUG",
             "file": "network.log",
             "console": true
-
         },
         "dns": {
             "loglevel": "SILENT",
             "file": "dns.log",
             "console": false
-
         }
     },
     "dns": {},
@@ -85,15 +85,16 @@ if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
     ]
 }
 EOF
-    public_ip=$(wget -qO- https://api.ipify.org)
-    echo "Your Server IPv4 is: $public_ip"
-fi
-if [ "$choice" -eq 1 ]; then
-    echo "You choice Iran."
-    read -p "enter Kharej Ipv4 :" ip_remote
-    read -p "Enter the SNI (default: www.speedtest.net): " input_sni
-    HOSTNAME=${input_sni:-www.speedtest.net}
-    cat > config.json << EOF
+        public_ip=$(wget -qO- https://api.ipify.org)
+        echo "Your Server IPv4 is: $public_ip"
+    fi
+
+    if [ "$choice" -eq 1 ]; then
+        echo "You chose Iran."
+        read -p "enter Kharej Ipv4: " ip_remote
+        read -p "Enter the SNI (default: www.speedtest.net): " input_sni
+        HOSTNAME=${input_sni:-www.speedtest.net}
+        cat > config.json << EOF
 {
     "name": "reverse_reality_server_multiport",
     "nodes": [
@@ -169,19 +170,19 @@ if [ "$choice" -eq 1 ]; then
     ]
 }
 EOF
-    sleep 0.5
-    setup_waterwall_service
-    sleep 0.5
-    echo "Iran IPv4 is: $public_ip"
-    echo "Kharej IPv4 is: $ip_remote"
-    echo "SNI $HOSTNAME"
-    echo "Iran Setup Successfully Created "
-elif [ "$choice" -eq 2 ]; then
-    echo "You chose Kharej."
-    read -p "enter Iran Ip: " ip_remote
-    read -p "Enter the SNI (default: www.speedtest.net): " input_sni
-    HOSTNAME=${input_sni:-www.speedtest.net}
-    cat > config.json << EOF
+        sleep 0.5
+        setup_waterwall_service
+        sleep 0.5
+        echo "Iran IPv4 is: $public_ip"
+        echo "Kharej IPv4 is: $ip_remote"
+        echo "SNI $HOSTNAME"
+        echo "Iran Setup Successfully Created "
+    elif [ "$choice" -eq 2 ]; then
+        echo "You chose Kharej."
+        read -p "enter Iran Ip: " ip_remote
+        read -p "Enter the SNI (default: www.speedtest.net): " input_sni
+        HOSTNAME=${input_sni:-www.speedtest.net}
+        cat > config.json << EOF
 {
     "name": "reverse_reality_client_multiport",
     "nodes": [
@@ -245,27 +246,31 @@ elif [ "$choice" -eq 2 ]; then
             }
         }
     ]
-}   
+}
 EOF
-    sleep 0.5
-    setup_waterwall_service
-    sleep 0.5
-    echo "Kharej IPv4 is: $public_ip"
-    echo "Iran IPv4 is: $ip_remote"
-    echo "SNI $HOSTNAME"
-    echo "Kharej Setup Successfully Created "
-elif [ "$choice" -eq 3 ]; then
-    sudo systemctl stop waterwall
-    sudo systemctl disable waterwall
-    rm -rf /etc/systemd/system/waterwall.service
-    pkill -f Waterwall
-    cd /root/RRT
-    rm -rf core.json
-    rm -rf config.json
-    rm -rf Waterwall
-    rm -rf log
+        sleep 0.5
+        setup_waterwall_service
+        sleep 0.5
+        echo "Kharej IPv4 is: $public_ip"
+        echo "Iran IPv4 is: $ip_remote"
+        echo "SNI $HOSTNAME"
+        echo "Kharej Setup Successfully Created "
+    elif [ "$choice" -eq 3 ]; then
+        sudo systemctl stop waterwall
+        sudo systemctl disable waterwall
+        rm -rf /etc/systemd/system/waterwall.service
+        pkill -f Waterwall
+        cd /root/RRT
+        rm -rf core.json
+        rm -rf config.json
+        rm -rf Waterwall
+        rm -rf log
 
-    echo "Removed"
-else
-    echo "Invalid choice. Please try again."
-fi
+        echo "Removed"
+    elif [ "$choice" -eq 9 ]; then
+        echo "Going back..."
+        break
+    else
+        echo "Invalid choice. Please try again."
+    fi
+done
