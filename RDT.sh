@@ -5,7 +5,7 @@ while true; do
     echo "1) Iran "
     echo "2) Kharej "
     echo "3) Uninstall"
-    echo "9) Exit"
+    echo "9) Back"
     read -p "Enter your choice: " choice
 
     if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
