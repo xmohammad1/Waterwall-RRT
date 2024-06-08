@@ -1,31 +1,34 @@
 #!/bin/bash
 
-echo "Please choose Number:"
-echo "1. Iran "
-echo "2. Kharej "
-echo "3. Uninstall"
-read -p "Enter your choice: " choice
-if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
-    apt update
-    sleep 0.5
-    SSHD_CONFIG_FILE="/etc/ssh/sshd_config"
-    CURRENT_PORT=$(grep -E '^(#Port |Port )' "$SSHD_CONFIG_FILE")
+while true; do
+    echo "Please choose Number:"
+    echo "1) Iran "
+    echo "2) Kharej "
+    echo "3) Uninstall"
+    echo "9) Exit"
+    read -p "Enter your choice: " choice
 
-    if [[ "$CURRENT_PORT" != "Port 22" && "$CURRENT_PORT" != "#Port 22" ]]; then
-        sudo sed -i -E 's/^(#Port |Port )[0-9]+/Port 22/' "$SSHD_CONFIG_FILE"
-        echo "SSH Port has been updated to Port 22."
-        sudo systemctl restart sshd
-        sudo service ssh restart
-    fi
-    sleep 0.5
-    wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
-    apt install unzip -y
-    unzip Waterwall-linux-64.zip
-    sleep 0.5
-    chmod +x Waterwall
-    sleep 0.5
-    rm Waterwall-linux-64.zip
-    cat > core.json << EOF
+    if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
+        apt update
+        sleep 0.5
+        SSHD_CONFIG_FILE="/etc/ssh/sshd_config"
+        CURRENT_PORT=$(grep -E '^(#Port |Port )' "$SSHD_CONFIG_FILE")
+
+        if [[ "$CURRENT_PORT" != "Port 22" && "$CURRENT_PORT" != "#Port 22" ]]; then
+            sudo sed -i -E 's/^(#Port |Port )[0-9]+/Port 22/' "$SSHD_CONFIG_FILE"
+            echo "SSH Port has been updated to Port 22."
+            sudo systemctl restart sshd
+            sudo service ssh restart
+        fi
+        sleep 0.5
+        wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
+        apt install unzip -y
+        unzip Waterwall-linux-64.zip
+        sleep 0.5
+        chmod +x Waterwall
+        sleep 0.5
+        rm Waterwall-linux-64.zip
+        cat > core.json << EOF
 {
     "log": {
         "path": "log/",
@@ -38,13 +41,11 @@ if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
             "loglevel": "DEBUG",
             "file": "network.log",
             "console": true
-
         },
         "dns": {
             "loglevel": "SILENT",
             "file": "dns.log",
             "console": false
-
         }
     },
     "dns": {},
@@ -58,15 +59,16 @@ if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
     ]
 }
 EOF
-    public_ip=$(wget -qO- https://api.ipify.org)
-    echo "Your Server IPv4 is: $public_ip"
-fi
-if [ "$choice" -eq 1 ]; then
-    echo "You choice Iran."
-    read -p "enter Kharej Ipv4 :" ip_remote
-    read -p "Enter the SNI (default: www.speedtest.net): " input_sni
-    HOSTNAME=${input_sni:-www.speedtest.net}
-    cat > config.json << EOF
+        public_ip=$(wget -qO- https://api.ipify.org)
+        echo "Your Server IPv4 is: $public_ip"
+    fi
+
+    if [ "$choice" -eq 1 ]; then
+        echo "You chose Iran."
+        read -p "Enter Kharej IPv4: " ip_remote
+        read -p "Enter the SNI (default: www.speedtest.net): " input_sni
+        HOSTNAME=${input_sni:-www.speedtest.net}
+        cat > config.json << EOF
 {
     "name": "reality_client_multiport",
     "nodes": [
@@ -97,7 +99,6 @@ if [ "$choice" -eq 1 ]; then
             },
             "next": "outbound_to_kharej"
         },
-
         {
             "name": "outbound_to_kharej",
             "type": "TcpConnector",
@@ -107,22 +108,20 @@ if [ "$choice" -eq 1 ]; then
                 "port":443
             }
         }
-     
-      
     ]
 }
 EOF
-    sleep 1
-    nohup ./Waterwall > /dev/null 2>&1 &
-    echo "Iran IPv4 is: $public_ip"
-    echo "Kharej IPv4 is: $ip_remote"
-    echo "SNI $HOSTNAME"
-    echo "Iran Setup Successfully Created "
-elif [ "$choice" -eq 2 ]; then
-    echo "You chose Kharej."
-    read -p "Enter the SNI (default: www.speedtest.net): " input_sni
-    HOSTNAME=${input_sni:-www.speedtest.net}
-    cat > config.json << EOF
+        sleep 1
+        nohup ./Waterwall > /dev/null 2>&1 &
+        echo "Iran IPv4 is: $public_ip"
+        echo "Kharej IPv4 is: $ip_remote"
+        echo "SNI $HOSTNAME"
+        echo "Iran Setup Successfully Created"
+    elif [ "$choice" -eq 2 ]; then
+        echo "You chose Kharej."
+        read -p "Enter the SNI (default: www.speedtest.net): " input_sni
+        HOSTNAME=${input_sni:-www.speedtest.net}
+        cat > config.json << EOF
 {
     "name": "reality_server_multiport",
     "nodes": [
@@ -136,18 +135,15 @@ elif [ "$choice" -eq 2 ]; then
             },
             "next": "my_reality_server"
         },
-
         {
             "name": "my_reality_server",
             "type": "RealityServer",
             "settings": {
                 "destination":"reality_dest_node",
                 "password":"passwd"
-
             },
             "next": "header_server"
         },
-        
         {
             "name": "header_server",
             "type": "HeaderServer",
@@ -156,7 +152,6 @@ elif [ "$choice" -eq 2 ]; then
             },
             "next": "final_outbound"
         },
-
         {
             "name": "final_outbound",
             "type": "TcpConnector",
@@ -164,10 +159,8 @@ elif [ "$choice" -eq 2 ]; then
                 "nodelay": true,
                 "address":"127.0.0.1",
                 "port":"dest_context->port"
-
             }
         },
-
         {
             "name": "reality_dest_node",
             "type": "TcpConnector",
@@ -177,21 +170,26 @@ elif [ "$choice" -eq 2 ]; then
                 "port":443
             }
         }
-      
     ]
-}  
+}
 EOF
-    sleep 1
-    nohup ./Waterwall > /dev/null 2>&1 &
-    echo "SNI $HOSTNAME"
-    echo "Kharej Setup Successfully Created "
-elif [ "$choice" -eq 3 ]; then
-    rm -rf core.json
-    rm -rf config.json
-    rm -rf Waterwall
-    rm -rf log
-    pkill -f Waterwall
-    echo "Removed"
-else
-    echo "Invalid choice. Please try again."
-fi
+        sleep 1
+        nohup ./Waterwall > /dev/null 2>&1 &
+        echo "SNI $HOSTNAME"
+        echo "Kharej Setup Successfully Created"
+    elif [ "$choice" -eq 3 ]; then
+        rm -rf core.json
+        rm -rf config.json
+        rm -rf Waterwall
+        rm -rf log
+        pkill -f Waterwall
+        echo "Removed"
+    elif [ "$choice" -eq 9 ]; then
+        echo "Exiting..."
+        break
+    else
+        echo "Invalid choice. Please try again."
+    fi
+
+    echo ""
+done
