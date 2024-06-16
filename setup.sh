@@ -47,7 +47,7 @@ while true; do
         sleep 0.5
         mkdir /root/RRT
         cd /root/RRT
-        wget https://github.com/radkesvat/WaterWall/releases/download/v0.99/Waterwall-linux-64.zip
+        wget https://github.com/radkesvat/WaterWall/releases/download/v1.05/Waterwall-linux-64.zip
         apt install unzip -y
         unzip Waterwall-linux-64.zip
         sleep 0.5
@@ -260,11 +260,7 @@ EOF
         sudo systemctl disable waterwall
         rm -rf /etc/systemd/system/waterwall.service
         pkill -f Waterwall
-        cd /root/RRT
-        rm -rf core.json
-        rm -rf config.json
-        rm -rf Waterwall
-        rm -rf log
+        rm -rf /root/RRT
 
         echo "Removed"
     elif [ "$choice" -eq 9 ]; then
