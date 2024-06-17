@@ -1,3 +1,9 @@
+# Reverse Reality Tunnel with MUX
+```
+bash <(curl -Ls https://raw.githubusercontent.com/xmohammad1/Waterwall-RRT/main/RRT_MUX.sh)
+```
+
+
 # Reality Reverse Tunnel
 
 ```
