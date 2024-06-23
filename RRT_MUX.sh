@@ -46,13 +46,13 @@ while true; do
         sleep 0.5
         mkdir /root/RRT
         cd /root/RRT
-        wget https://github.com/radkesvat/WaterWall/releases/download/v1.15/Waterwall-linux-64.zip
+        wget https://github.com/radkesvat/WaterWall/releases/download/v1.18/Waterwall-linux-arm64.zip
         apt install unzip -y
-        unzip -o Waterwall-linux-64.zip
+        unzip -o Waterwall-linux-arm64.zip
         sleep 0.5
         chmod +x Waterwall
         sleep 0.5
-        rm Waterwall-linux-64.zip
+        rm Waterwall-linux-arm64.zip
         cat > core.json << EOF
 {
     "log": {
