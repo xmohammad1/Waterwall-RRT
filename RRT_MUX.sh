@@ -114,8 +114,6 @@ while true; do
 
     read -p "Enter your choice: " choice
     if [[ "$choice" -eq 1 || "$choice" -eq 2 ]]; then
-        apt update
-        sleep 0.5
         SSHD_CONFIG_FILE="/etc/ssh/sshd_config"
         CURRENT_PORT=$(grep -E '^(#Port |Port )' "$SSHD_CONFIG_FILE")
 
