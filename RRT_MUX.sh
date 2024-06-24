@@ -133,22 +133,28 @@ while true; do
         if [[ "$answer" == [Yy]* ]]; then
             # Get the latest release URL
             url=$(get_latest_release_url)
+            # Wait until url is set
+            while [ -z "$url" ]; do
+                sleep 0.1
+            done
             echo "Latest Release URL: $url"
-            sleep 0.5
             download_and_unzip "$url" "$ASSET_NAME"
             break
         elif [[ "$answer" == [Nn]* ]]; then
             read -p "Enter the version you want to install (e.g., v1.18): " version
             # Get the specific release URL
             url=$(get_specific_release_url "$version")
+            # Wait until url is set
+            while [ -z "$url" ]; do
+                sleep 0.1
+            done
             echo "Specific Version URL: $url"
-            sleep 0.5
             download_and_unzip "$url" "$ASSET_NAME"
             break
         else
             echo "Please answer yes (y) or no (n)."
         fi
-        
+
         cat > core.json << EOF
 {
     "log": {
