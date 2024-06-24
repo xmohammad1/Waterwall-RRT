@@ -134,6 +134,7 @@ while true; do
             [Yy]* )
                 # Get the latest release URL
                 url=$(get_latest_release_url)
+                sleep 0.5
                 download_and_unzip "$url" "$ASSET_NAME"
                 break
                 ;;
@@ -141,6 +142,7 @@ while true; do
                 read -p "Enter the version you want to install (e.g., v1.18): " version
                 # Get the specific release URL
                 url=$(get_specific_release_url "$version")
+                sleep 0.5
                 download_and_unzip "$url" "$ASSET_NAME"
                 break
                 ;;
