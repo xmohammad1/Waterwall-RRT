@@ -135,10 +135,14 @@ while true; do
             # Get the latest release URL
             url=$(get_latest_release_url)
             # Wait until url is set
-            while [ -z "$url" ]; do
-                sleep 0.1
-            done
-            #echo "Latest Release URL: $url"
+            #while [ -z "$url" ]; do
+            #    sleep 0.1
+            #done
+            if [ $? -ne 0 ] || [ -z "$url" ]; then
+                echo "Failed to retrieve the latest release URL."
+                exit 1
+            fi
+            echo "Latest Release URL: $url"
             download_and_unzip "$url" "$ASSET_NAME"
             break
         elif [[ "$answer" == [Nn]* ]]; then
@@ -146,10 +150,14 @@ while true; do
             # Get the specific release URL
             url=$(get_specific_release_url "$version")
             # Wait until url is set
-            while [ -z "$url" ]; do
-                sleep 0.1
-            done
-            #echo "Specific Version URL: $url"
+            #while [ -z "$url" ]; do
+            #    sleep 0.1
+            #done
+            if [ $? -ne 0 ] || [ -z "$url" ]; then
+                echo "Failed to retrieve the latest release URL."
+                exit 1
+            fi
+            echo "Specific Version URL: $url"
             download_and_unzip "$url" "$ASSET_NAME"
             break
         else
