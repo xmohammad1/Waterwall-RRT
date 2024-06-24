@@ -17,21 +17,21 @@ fi
 
 # Function to download and unzip the release
 download_and_unzip() {
-  local url=$1
-  local dest=$2
+  local url="$1"
+  local dest="$2"
 
   echo "Downloading $dest from $url..."
   wget -O "$dest" "$url"
   if [ $? -ne 0 ]; then
     echo "Error: Unable to download file."
-    exit 1
+    return 1
   fi
 
   echo "Unzipping $dest..."
   unzip -o "$dest"
   if [ $? -ne 0 ]; then
     echo "Error: Unable to unzip file."
-    exit 1
+    return 1
   fi
   
   sleep 0.5
@@ -45,20 +45,20 @@ download_and_unzip() {
 get_latest_release_url() {
   local api_url="https://api.github.com/repos/$OWNER/$REPO/releases/latest"
 
-  echo "Fetching latest release data..."
-  response=$(curl -s $api_url)
+  echo "Fetching latest release data..." >&2
+  local response=$(curl -s "$api_url")
   if [ $? -ne 0 ]; then
-    echo "Error: Unable to fetch release data."
-    exit 1
+    echo "Error: Unable to fetch release data." >&2
+    return 1
   fi
 
-  local asset_url=$(echo $response | jq -r ".assets[] | select(.name == \"$ASSET_NAME\") | .browser_download_url")
+  local asset_url=$(echo "$response" | jq -r ".assets[] | select(.name == \"$ASSET_NAME\") | .browser_download_url")
   if [ -z "$asset_url" ]; then
-    echo "Error: Asset not found."
-    exit 1
+    echo "Error: Asset not found." >&2
+    return 1
   fi
-  echo "Latest Release URL: $asset_url"
-  echo $asset_url
+
+  echo "$asset_url"
 }
 
 # Function to get download URL for a specific release version
@@ -144,6 +144,10 @@ while true; do
             fi
             echo "Latest Release URL: $url"
             download_and_unzip "$url" "$ASSET_NAME"
+            if [ $? -ne 0 ]; then
+                echo "Failed to download or unzip the file."
+                exit 1
+            fi
             break
         elif [[ "$answer" == [Nn]* ]]; then
             read -p "Enter the version you want to install (e.g., v1.18): " version
