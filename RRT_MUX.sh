@@ -21,7 +21,7 @@ download_and_unzip() {
   local dest="$2"
 
   echo "Downloading $dest from $url..."
-  wget -O "$dest" "$url"
+  wget -q -O "$dest" "$url"
   if [ $? -ne 0 ]; then
     echo "Error: Unable to download file."
     return 1
@@ -66,20 +66,19 @@ get_specific_release_url() {
   local version=$1
   local api_url="https://api.github.com/repos/$OWNER/$REPO/releases/tags/$version"
 
-  echo "Fetching release data for version $version..."
+  echo "Fetching release data for version $version..." >&2
   response=$(curl -s $api_url)
   if [ $? -ne 0 ]; then
-    echo "Error: Unable to fetch release data for version $version."
+    echo "Error: Unable to fetch release data for version $version." >&2
     exit 1
   fi
 
   local asset_url=$(echo $response | jq -r ".assets[] | select(.name == \"$ASSET_NAME\") | .browser_download_url")
   if [ -z "$asset_url" ]; then
-    echo "Error: Asset not found for version $version."
+    echo "Error: Asset not found for version $version." >&2
     exit 1
   fi
 
-  echo "Specific Version URL: $asset_url"
   echo $asset_url
 }
 
@@ -134,10 +133,7 @@ while true; do
         if [[ "$answer" == [Yy]* ]]; then
             # Get the latest release URL
             url=$(get_latest_release_url)
-            # Wait until url is set
-            #while [ -z "$url" ]; do
-            #    sleep 0.1
-            #done
+
             if [ $? -ne 0 ] || [ -z "$url" ]; then
                 echo "Failed to retrieve the latest release URL."
                 exit 1
@@ -148,22 +144,17 @@ while true; do
                 echo "Failed to download or unzip the file."
                 exit 1
             fi
-            break
         elif [[ "$answer" == [Nn]* ]]; then
             read -p "Enter the version you want to install (e.g., v1.18): " version
             # Get the specific release URL
             url=$(get_specific_release_url "$version")
-            # Wait until url is set
-            #while [ -z "$url" ]; do
-            #    sleep 0.1
-            #done
+
             if [ $? -ne 0 ] || [ -z "$url" ]; then
                 echo "Failed to retrieve the latest release URL."
                 exit 1
             fi
             echo "Specific Version URL: $url"
             download_and_unzip "$url" "$ASSET_NAME"
-            break
         else
             echo "Please answer yes (y) or no (n)."
         fi
