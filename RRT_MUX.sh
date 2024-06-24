@@ -157,6 +157,7 @@ while true; do
             download_and_unzip "$url" "$ASSET_NAME"
         else
             echo "Please answer yes (y) or no (n)."
+            break
         fi
 
         cat > core.json << EOF
