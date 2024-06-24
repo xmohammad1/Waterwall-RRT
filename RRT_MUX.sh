@@ -21,7 +21,7 @@ download_and_unzip() {
   local dest=$2
 
   echo "Downloading $dest from $url..."
-  wget -q -O "$dest" "$url"
+  wget -O "$dest" "$url"
   if [ $? -ne 0 ]; then
     echo "Error: Unable to download file."
     exit 1
