@@ -1,5 +1,87 @@
 #!/bin/bash
 
+# Set the owner and repo variables
+OWNER="radkesvat"
+REPO="WaterWall"
+
+# Determine the architecture and set the ASSET_NAME accordingly
+ARCH=$(uname -m)
+if [ "$ARCH" == "aarch64" ]; then
+  ASSET_NAME="Waterwall-linux-arm64.zip"
+elif [ "$ARCH" == "x86_64" ]; then
+  ASSET_NAME="Waterwall-linux-64.zip"
+else
+  echo "Unsupported architecture: $ARCH"
+  exit 1
+fi
+
+# Function to download and unzip the release
+download_and_unzip() {
+  local url=$1
+  local dest=$2
+
+  echo "Downloading $dest from $url..."
+  wget -q -O "$dest" "$url"
+  if [ $? -ne 0 ]; then
+    echo "Error: Unable to download file."
+    exit 1
+  fi
+
+  echo "Unzipping $dest..."
+  unzip -o "$dest"
+  if [ $? -ne 0 ]; then
+    echo "Error: Unable to unzip file."
+    exit 1
+  fi
+  
+  sleep 0.5
+  chmod +x Waterwall
+  rm "$dest"
+
+  echo "Download and unzip completed successfully."
+}
+
+# Function to get download URL for the latest release
+get_latest_release_url() {
+  local api_url="https://api.github.com/repos/$OWNER/$REPO/releases/latest"
+
+  echo "Fetching latest release data..."
+  response=$(curl -s $api_url)
+  if [ $? -ne 0 ]; then
+    echo "Error: Unable to fetch release data."
+    exit 1
+  fi
+
+  local asset_url=$(echo $response | jq -r ".assets[] | select(.name == \"$ASSET_NAME\") | .browser_download_url")
+  if [ -z "$asset_url" ]; then
+    echo "Error: Asset not found."
+    exit 1
+  fi
+
+  echo $asset_url
+}
+
+# Function to get download URL for a specific release version
+get_specific_release_url() {
+  local version=$1
+  local api_url="https://api.github.com/repos/$OWNER/$REPO/releases/tags/$version"
+
+  echo "Fetching release data for version $version..."
+  response=$(curl -s $api_url)
+  if [ $? -ne 0 ]; then
+    echo "Error: Unable to fetch release data for version $version."
+    exit 1
+  fi
+
+  local asset_url=$(echo $response | jq -r ".assets[] | select(.name == \"$ASSET_NAME\") | .browser_download_url")
+  if [ -z "$asset_url" ]; then
+    echo "Error: Asset not found for version $version."
+    exit 1
+  fi
+
+  echo $asset_url
+}
+
 setup_waterwall_service() {
     cat > /etc/systemd/system/waterwall.service << EOF
 [Unit]
@@ -46,13 +128,30 @@ while true; do
         sleep 0.5
         mkdir /root/RRT
         cd /root/RRT
-        wget https://github.com/radkesvat/WaterWall/releases/download/v1.18/Waterwall-linux-arm64.zip
         apt install unzip -y
-        unzip -o Waterwall-linux-arm64.zip
-        sleep 0.5
-        chmod +x Waterwall
-        sleep 0.5
-        rm Waterwall-linux-arm64.zip
+        apt install jq -y
+
+        read -p "Do you want to install the latest version? (y/n): " answer
+        case $answer in
+            [Yy]* )
+                # Get the latest release URL
+                url=$(get_latest_release_url)
+                download_and_unzip "$url" "$ASSET_NAME"
+                break
+                ;;
+            [Nn]* )
+                read -p "Enter the version you want to install (e.g., v1.18): " version
+                # Get the specific release URL
+                url=$(get_specific_release_url "$version")
+                download_and_unzip "$url" "$ASSET_NAME"
+                break
+                ;;
+            * )
+                echo "Please answer yes (y) or no (n)."
+                ;;
+        esac
+
+
         cat > core.json << EOF
 {
     "log": {
