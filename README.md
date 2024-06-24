@@ -2,7 +2,7 @@
 
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/xmohammad1/Waterwall-RRT/main/RRT_MUX.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/persian-michael-scott/Waterwall-RRT/main/RRT_MUX.sh)
 ```
 
 
