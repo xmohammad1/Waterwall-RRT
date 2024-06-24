@@ -57,7 +57,7 @@ get_latest_release_url() {
     echo "Error: Asset not found."
     exit 1
   fi
-
+  echo "Latest Release URL: $asset_url"
   echo $asset_url
 }
 
@@ -79,6 +79,7 @@ get_specific_release_url() {
     exit 1
   fi
 
+  echo "Specific Version URL: $asset_url"
   echo $asset_url
 }
 
@@ -137,7 +138,7 @@ while true; do
             while [ -z "$url" ]; do
                 sleep 0.1
             done
-            echo "Latest Release URL: $url"
+            #echo "Latest Release URL: $url"
             download_and_unzip "$url" "$ASSET_NAME"
             break
         elif [[ "$answer" == [Nn]* ]]; then
@@ -148,7 +149,7 @@ while true; do
             while [ -z "$url" ]; do
                 sleep 0.1
             done
-            echo "Specific Version URL: $url"
+            #echo "Specific Version URL: $url"
             download_and_unzip "$url" "$ASSET_NAME"
             break
         else
